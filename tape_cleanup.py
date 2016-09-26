@@ -55,26 +55,58 @@ def clear_newlines():
     '''
     
 def unique_tape():
-    # this currently shows dupes, nbot exactly sole reference numbers - still a useful audit.
+    # this currently shows dupes, not exactly sole reference numbers - still a useful audit.
     tape_file = r'C:\Users\kieran.oleary\Documents\audit\1tape_newlines_removed_lowercase_refs.csv'
-    temp_file = r'C:\Users\kieran.oleary\Documents\audit\2tape_newlines_removed_lowercase_refs_count.csv'
+    temp_file = r'C:\Users\kieran.oleary\Documents\audit\20160926_2tape_newlines_removed_lowercase_refs_count_csvmodule.csv'
     film_file = r'C:\Users\kieran.oleary\Documents\audit\film_20160912_working_copy.csv'
-
     read_object = open(tape_file)
     reader = csv.reader(read_object)
     csv_list = list(reader)
     ref_list = []
     for i in csv_list:
        ref_list.append((i[0], i[1]))
-     
-    counter_dict =  Counter(ref_list)
-    
-        
-    with open(temp_file, 'w') as fo:
+    counter_dict =  Counter(ref_list) 
+    with open(temp_file, 'ab') as fo:
         for i in counter_dict:
-            fo.write(str(i[0]) + ', ' + str(i[1]) + ', '+ str(counter_dict[i]) + '\n')
-        
-   
-unique_tape()    
-        
+            writer = csv.writer(fo)
+            row = (str(i[0]), str(i[1]), str(counter_dict[i]))
+            if counter_dict[i] > 1:
+                writer.writerow(row)
+def unique_tape_refs():
+    # this currently shows dupes, not exactly sole reference numbers - still a useful audit.
+    tape_file = r'C:\Users\kieran.oleary\Documents\audit\1tape_newlines_removed_lowercase_refs.csv'
+    temp_file = r'C:\Users\kieran.oleary\Documents\audit\20160926_single_tape_may_be_film_holdings.csv'
+    film_file = r'C:\Users\kieran.oleary\Documents\audit\film_20160912_working_copy.csv'
+    read_object = open(tape_file)
+    reader = csv.reader(read_object)
+    csv_list = list(reader)
+    ref_list = []
+    for i in csv_list:
+       ref_list.append(i[0])
+    counter_dict =  Counter(ref_list)    
+    with open(temp_file, 'ab') as fo:
+        for i in counter_dict:
+            writer = csv.writer(fo)
+            row = (str(i), str(counter_dict[i]))
+            if counter_dict[i] == 1:
+                writer.writerow(row)      
+def check_if_unique_tapes_have_film_holdings():
+    tape_file = r'C:\Users\kieran.oleary\Documents\audit\20160926_single_tape_may_be_film_holdings.csv'
+    temp_file = r'C:\Users\kieran.oleary\Documents\audit\20160926_real_sole_tapes.csv'
+    film_file = r'C:\Users\kieran.oleary\Documents\audit\1film_newlines_removed_lowercase_refs.csv'
+    read_object = open(tape_file)
+    reader = csv.reader(read_object)
+    tape_csv_list = list(reader)
+    film_read_object = open(film_file)
+    film_reader = csv.reader(film_read_object)
+    film_csv_list = list(film_reader)
+    just_film_ref_numbers = []
+    for i in film_csv_list:
+        just_film_ref_numbers.append(i[0])
+    with open(temp_file, 'ab') as fo:
+        writer = csv.writer(fo)
+        for records in tape_csv_list:
+                    if records[0] not in just_film_ref_numbers:
+                        writer.writerow([records[0]])
+ 
         
